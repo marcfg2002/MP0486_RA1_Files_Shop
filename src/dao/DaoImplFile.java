@@ -69,39 +69,39 @@ public class DaoImplFile implements Dao {
 
 	@Override
 	public boolean writeInventory(ArrayList<Product> ProductsList) {
-		LocalDate myObj = LocalDate.now();
-		String fileName = "inventory_" + myObj.toString() + ".txt";
+	    LocalDate myObj = LocalDate.now();
+	    String fileName = "inventory_" + myObj.toString() + ".txt";
 
-		// locate file, path and name
-		File f = new File(System.getProperty("user.dir") + File.separator + "files" + File.separator + fileName);
+	    // locate file, path and name
+	    File f = new File(System.getProperty("user.dir") + File.separator + "files" + File.separator + fileName);
+	           
+	    try (
 
-		try {
-			// wrap in proper classes
-			FileWriter fw;
-			fw = new FileWriter(f, true);
-			PrintWriter pw = new PrintWriter(fw);
+	        FileWriter fw = new FileWriter(f, false); 
+	        PrintWriter pw = new PrintWriter(fw)
+	    ) {
 
-			// write line by line
-			int counterProduct = 1;
-			for (Product product : ProductsList) {
-				StringBuilder firstLine = new StringBuilder(
-						counterProduct + "Id=" + product.getId() + ";Name=" + product.getName() + ";WholesalerPrice="
-								+ product.getWholesalerPrice() + ";PublicPrice=" + product.getPublicPrice()
-								+ ";Available=" + product.isAvailable() + ";Stock=" + product.getStock() + ";");
-				pw.write(firstLine.toString());
-				fw.write("\n");
-
-				// increment counter sales
-				counterProduct++;
-			}
-			// close files
-			pw.close();
-			fw.close();
-			return true;
-
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
+	        int counterProduct = 1;
+	        for (Product product : ProductsList) {				
+	            StringBuilder firstLine = new StringBuilder(
+	                counterProduct + "Id=" + product.getId() + ";" +
+	                "Name=" + product.getName() + ";" + 
+	                "WholesalerPrice=" + product.getWholesalerPrice() + ";" +
+	                "PublicPrice=" + product.getPublicPrice() + ";" +
+	                "Available=" + product.isAvailable() + ";" +
+	                "Stock=" + product.getStock() + ";"
+	            );
+	            pw.println(firstLine.toString());
+	            
+	            counterProduct++;
+	        }
+	        
+	        return true;
+	        
+	    } catch (IOException e) {
+	        System.err.println("Error al escribir el inventario en: " + f.getAbsolutePath());
+	        e.printStackTrace();
+	        return false;
+	    }
 	}
 }
