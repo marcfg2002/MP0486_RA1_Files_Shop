@@ -19,6 +19,7 @@ import java.util.Scanner;
 
 import dao.Dao;
 import dao.DaoImplFile;
+import dao.DaoImplJDBC;
 
 public class Shop {
 	private Amount cash = new Amount(100.00);
@@ -28,13 +29,14 @@ public class Shop {
 //	private Sale[] sales;
 	private ArrayList<Sale> sales;
 	private int numberSales;
-	private Dao dao = new DaoImplFile();
+	private Dao dao = new DaoImplJDBC();
 
 	final static double TAX_RATE = 1.04;
 
 	public Shop() {
 		inventory = new ArrayList<Product>();
 		sales = new ArrayList<Sale>();
+		dao.connect();
 	}
 
 	public Amount getCash() {

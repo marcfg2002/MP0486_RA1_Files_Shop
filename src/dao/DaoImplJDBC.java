@@ -1,18 +1,25 @@
 package dao;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import model.Employee;
 import model.Product;
+import model.Amount;
 
 public class DaoImplJDBC implements Dao {
 	Connection connection;
+	private static final String GET_INVENTORY = "SELECT name, price, wholesalerPrice, available, stock FROM inventory";
 
 	@Override
 	public void connect() {
@@ -66,12 +73,65 @@ public class DaoImplJDBC implements Dao {
 
 	@Override
 	public ArrayList<Product> getInventory() {
-		return null;
+		ArrayList<Product> inventory = new ArrayList<>();
+		
+		try (PreparedStatement preparedStatement = connection.prepareStatement(GET_INVENTORY)) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                	
+                	String name = resultSet.getString("name");
+                    double price = resultSet.getDouble("price");
+                    double wholesalerPrice = resultSet.getDouble("wholesalerPrice");
+                    boolean available = resultSet.getBoolean("available");
+                    int stock = resultSet.getInt("stock");
+
+                    Product product = new Product(name, new Amount(price), available, stock);
+                    inventory.add(product);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+		
+		return inventory;
 	}
 
 	@Override
 	public boolean writeInventory(ArrayList<Product> ProductsList) {
-		return false;
+	    LocalDate myObj = LocalDate.now();
+	    String fileName = "inventory_" + myObj.toString() + ".txt";
+
+	    // locate file, path and name
+	    File f = new File(System.getProperty("user.dir") + File.separator + "files" + File.separator + fileName);
+	           
+	    try (
+
+	        FileWriter fw = new FileWriter(f, false); 
+	        PrintWriter pw = new PrintWriter(fw)
+	    ) {
+
+	        int counterProduct = 1;
+	        for (Product product : ProductsList) {				
+	            StringBuilder firstLine = new StringBuilder(
+	                counterProduct + "Id=" + product.getId() + ";" +
+	                "Name=" + product.getName() + ";" + 
+	                "WholesalerPrice=" + product.getWholesalerPrice() + ";" +
+	                "PublicPrice=" + product.getPublicPrice() + ";" +
+	                "Available=" + product.isAvailable() + ";" +
+	                "Stock=" + product.getStock() + ";"
+	            );
+	            pw.println(firstLine.toString());
+	            
+	            counterProduct++;
+	        }
+	        
+	        return true;
+	        
+	    } catch (IOException e) {
+	        System.err.println("Error al escribir el inventario en: " + f.getAbsolutePath());
+	        e.printStackTrace();
+	        return false;
+	    }
 	}
 
 }
