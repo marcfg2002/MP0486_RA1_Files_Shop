@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import model.Employee;
@@ -20,6 +21,7 @@ import model.Amount;
 public class DaoImplJDBC implements Dao {
 	Connection connection;
 	private static final String GET_INVENTORY = "SELECT name, price, wholesalerPrice, available, stock FROM inventory";
+	private static final String INSERT_HISTORICAL_INVENTORY = "INSERT INTO historical_inventory (id_product, name, wholesalerPrice, available, stock, created_at) " + "VALUES (?, ?, ?, ?, ?, ?)";
 
 	@Override
 	public void connect() {
@@ -97,41 +99,29 @@ public class DaoImplJDBC implements Dao {
 	}
 
 	@Override
-	public boolean writeInventory(ArrayList<Product> ProductsList) {
-	    LocalDate myObj = LocalDate.now();
-	    String fileName = "inventory_" + myObj.toString() + ".txt";
+	public boolean writeInventory(ArrayList<Product> products) {
+		LocalDateTime now = LocalDateTime.now();
 
-	    // locate file, path and name
-	    File f = new File(System.getProperty("user.dir") + File.separator + "files" + File.separator + fileName);
-	           
-	    try (
+		try (PreparedStatement ps = connection.prepareStatement(INSERT_HISTORICAL_INVENTORY)) {
+			
+			for (Product product : products) {
+				
+				ps.setInt(1, product.getId());
+				ps.setString(2, product.getName());
+				ps.setDouble(3, product.getWholesalerPrice().getValue()); 
+				ps.setBoolean(4, product.isAvailable());
+				ps.setInt(5, product.getStock());
+				ps.setObject(6, now);
 
-	        FileWriter fw = new FileWriter(f, false); 
-	        PrintWriter pw = new PrintWriter(fw)
-	    ) {
+				ps.executeUpdate();
+			}
+			
+			System.out.println("Inventario guardado en base de datos correctamente.");
+			return true;
 
-	        int counterProduct = 1;
-	        for (Product product : ProductsList) {				
-	            StringBuilder firstLine = new StringBuilder(
-	                counterProduct + "Id=" + product.getId() + ";" +
-	                "Name=" + product.getName() + ";" + 
-	                "WholesalerPrice=" + product.getWholesalerPrice() + ";" +
-	                "PublicPrice=" + product.getPublicPrice() + ";" +
-	                "Available=" + product.isAvailable() + ";" +
-	                "Stock=" + product.getStock() + ";"
-	            );
-	            pw.println(firstLine.toString());
-	            
-	            counterProduct++;
-	        }
-	        
-	        return true;
-	        
-	    } catch (IOException e) {
-	        System.err.println("Error al escribir el inventario en: " + f.getAbsolutePath());
-	        e.printStackTrace();
-	        return false;
-	    }
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
-
 }
