@@ -22,6 +22,7 @@ public class DaoImplJDBC implements Dao {
 	Connection connection;
 	private static final String GET_INVENTORY = "SELECT name, price, wholesalerPrice, available, stock FROM inventory";
 	private static final String INSERT_HISTORICAL_INVENTORY = "INSERT INTO historical_inventory (id_product, name, wholesalerPrice, available, stock, created_at) " + "VALUES (?, ?, ?, ?, ?, ?)";
+	private static final String INSERT_PRODUCT = "INSERT INTO inventory (name, wholesalerPrice, available, stock, price) VALUES (?, ?, ?, ?, ?)";
 
 	@Override
 	public void connect() {
@@ -124,4 +125,26 @@ public class DaoImplJDBC implements Dao {
 			return false;
 		}
 	}
+	
+	@Override
+    public void addProduct(Product product) {
+        try (PreparedStatement ps = connection.prepareStatement(INSERT_PRODUCT)) {
+            ps.setString(1, product.getName());
+            
+            ps.setDouble(2, product.getWholesalerPrice().getValue());
+            
+            ps.setBoolean(3, product.isAvailable());
+            
+            ps.setInt(4, product.getStock());            
+
+            ps.setDouble(5, product.getPublicPrice().getValue());
+
+            ps.executeUpdate();
+            
+            System.out.println("Producto " + product.getName() + " insertado en BBDD correctamente.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
