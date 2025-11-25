@@ -104,4 +104,8 @@ public class DaoImplFile implements Dao {
 	        return false;
 	    }
 	}
+	
+	public void addProduct(Product product) {
+
+	}
 }
