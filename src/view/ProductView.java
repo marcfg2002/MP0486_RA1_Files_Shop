@@ -182,12 +182,14 @@ public class ProductView extends JDialog implements ActionListener{
 					
 				} else {					
 					product.setStock(product.getStock() + Integer.parseInt(textFieldStock.getText()));
+					
+					shop.updateProduct(product);
+					
 					JOptionPane.showMessageDialog(null, "Stock actualizado ", "Information",
 							JOptionPane.INFORMATION_MESSAGE);
 					// release current screen
 					dispose();	
 				}
-				
 				break;
 				
 			case Constants.OPTION_REMOVE_PRODUCT:
