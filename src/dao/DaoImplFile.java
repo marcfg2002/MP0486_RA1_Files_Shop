@@ -108,4 +108,8 @@ public class DaoImplFile implements Dao {
 	public void addProduct(Product product) {
 
 	}
+	
+	public void updateProduct(Product product) {
+		
+	}
 }

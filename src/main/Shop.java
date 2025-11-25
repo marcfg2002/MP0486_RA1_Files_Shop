@@ -258,8 +258,11 @@ public class Shop {
 			// ask for stock
 			System.out.print("Seleccione la cantidad a añadir: ");
 			int stock = scanner.nextInt();
-			// update stock product
+			
 			product.setStock(product.getStock() + stock);
+			
+			updateProduct(product);
+			
 			System.out.println("El stock del producto " + name + " ha sido actualizado a " + product.getStock());
 
 		} else {
@@ -467,6 +470,9 @@ public class Shop {
         dao.addProduct(product);
     }
 
+	public void updateProduct(Product product) {
+        dao.updateProduct(product);
+    }
 	/**
 	 * check if inventory is full or not
 	 */
