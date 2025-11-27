@@ -193,22 +193,23 @@ public class ProductView extends JDialog implements ActionListener{
 				break;
 				
 			case Constants.OPTION_REMOVE_PRODUCT:
-				// check product exists
-				product = shop.findProduct(textFieldName.getText());
-				
-				if (product == null) {
-					JOptionPane.showMessageDialog(null, "Producto no existe ", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					
-				} else {					
-					shop.getInventory().remove(product);
-					JOptionPane.showMessageDialog(null, "Producto eliminado", "Information",
-							JOptionPane.INFORMATION_MESSAGE);
-					// release current screen
-					dispose();	
-				}
-				
-				break;
+                // check product exists
+                product = shop.findProduct(textFieldName.getText());
+                
+                if (product == null) {
+                    JOptionPane.showMessageDialog(null, "Producto no existe ", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    
+                } else {                    
+                    shop.deleteProduct(product);
+                    
+                    JOptionPane.showMessageDialog(null, "Producto eliminado", "Information",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    // release current screen
+                    dispose();  
+                }
+                
+                break;
 
 			default:
 				break;

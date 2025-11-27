@@ -222,7 +222,7 @@ public class Shop {
 	/**
 	 * remove a new product to inventory getting data from console
 	 */
-	public void removeProduct() {
+	/**public void removeProduct() {
 		if (inventory.size() == 0) {
 			System.out.println("No se pueden eliminar productos, inventario vacio");
 			return;
@@ -243,7 +243,28 @@ public class Shop {
 		} else {
 			System.out.println("No se ha encontrado el producto con nombre " + name);
 		}
-	}
+	}*/
+	
+	/**
+     * remove a product from inventory (CONSOLE VERSION)
+     */
+    public void removeProduct() {
+        if (inventory.size() == 0) {
+            System.out.println("No se pueden eliminar productos, inventario vacio");
+            return;
+        }
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Seleccione un nombre de producto: ");
+        String name = scanner.next();
+        Product product = findProduct(name);
+
+        if (product != null) {
+            deleteProduct(product);
+            System.out.println("El producto " + name + " ha sido eliminado");
+        } else {
+            System.out.println("No se ha encontrado el producto con nombre " + name);
+        }
+    }
 
 	/**
 	 * add stock for a specific product
@@ -473,6 +494,14 @@ public class Shop {
 	public void updateProduct(Product product) {
         dao.updateProduct(product);
     }
+	
+	public void deleteProduct(Product product) {
+        dao.deleteProduct(product);
+        
+        inventory.remove(product);
+        numberProducts--;
+    }
+	
 	/**
 	 * check if inventory is full or not
 	 */
