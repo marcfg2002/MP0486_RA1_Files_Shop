@@ -16,8 +16,8 @@ public class Product {
 
     @Column(name = "price")
     private double price; 
-
-    @Column(name = "wholesalerPrice")
+    
+    @Transient
     private double wholesalerPriceDouble; 
 
     @Column(name = "available")
@@ -44,9 +44,8 @@ public class Product {
         this.id = totalProducts + 1;
         this.name = name;
         this.wholesalerPrice = wholesalerPrice;
-        this.publicPrice = new Amount(wholesalerPrice.getValue() * 2);
+        this.publicPrice = new Amount(wholesalerPrice.getValue());
         
-        this.wholesalerPriceDouble = wholesalerPrice.getValue();
         this.price = this.publicPrice.getValue();
         
         this.available = available;
@@ -84,7 +83,7 @@ public class Product {
         this.wholesalerPrice = wholesalerPrice;
         this.wholesalerPriceDouble = wholesalerPrice.getValue();
     }
-
+    
     public boolean isAvailable() { return available; }
     public void setAvailable(boolean available) { this.available = available; }
 
@@ -101,6 +100,6 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product [name=" + name + ", publicPrice=" + getPublicPrice() + ", wholesalerPrice=" + getWholesalerPrice() + ", available=" + available + ", stock=" + stock + "]";
+        return "Product [name=" + name + ", publicPrice=" + getPublicPrice() + ", available=" + available + ", stock=" + stock + "]";
     }
 }

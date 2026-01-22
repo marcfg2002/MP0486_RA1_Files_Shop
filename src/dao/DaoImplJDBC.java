@@ -178,23 +178,7 @@ public class DaoImplJDBC implements Dao {
     }
 	
 	@Override
-    public void deleteProduct(Product product) {
-        String query = "DELETE FROM inventory WHERE name = ?";
-        
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            
-            ps.setString(1, product.getName());
-            
-            int rowsAffected = ps.executeUpdate();
-            
-            if(rowsAffected > 0) {
-                System.out.println("Producto eliminado de BBDD: " + product.getName());
-            } else {
-                System.out.println("No se pudo eliminar (producto no encontrado en BBDD).");
-            }
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+	public void deleteProduct(int id) {
+		
+	}
 }

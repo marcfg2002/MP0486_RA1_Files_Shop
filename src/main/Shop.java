@@ -20,6 +20,7 @@ import java.util.Scanner;
 import dao.Dao;
 import dao.DaoImplFile;
 import dao.DaoImplJDBC;
+import dao.DaoImplHibernate;
 
 public class Shop {
 	private Amount cash = new Amount(100.00);
@@ -29,7 +30,7 @@ public class Shop {
 //	private Sale[] sales;
 	private ArrayList<Sale> sales;
 	private int numberSales;
-	private Dao dao = new DaoImplJDBC();
+	private Dao dao = new DaoImplHibernate();
 
 	final static double TAX_RATE = 1.04;
 
@@ -244,27 +245,7 @@ public class Shop {
 			System.out.println("No se ha encontrado el producto con nombre " + name);
 		}
 	}*/
-	
-	/**
-     * remove a product from inventory (CONSOLE VERSION)
-     */
-    public void removeProduct() {
-        if (inventory.size() == 0) {
-            System.out.println("No se pueden eliminar productos, inventario vacio");
-            return;
-        }
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Seleccione un nombre de producto: ");
-        String name = scanner.next();
-        Product product = findProduct(name);
 
-        if (product != null) {
-            deleteProduct(product);
-            System.out.println("El producto " + name + " ha sido eliminado");
-        } else {
-            System.out.println("No se ha encontrado el producto con nombre " + name);
-        }
-    }
 
 	/**
 	 * add stock for a specific product
@@ -495,11 +476,43 @@ public class Shop {
         dao.updateProduct(product);
     }
 	
-	public void deleteProduct(Product product) {
-        dao.deleteProduct(product);
+	public void removeProduct() {
+        if (inventory.size() == 0) {
+            System.out.println("No se pueden eliminar productos, inventario vacio");
+            return;
+        }
+        
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Seleccione el ID del producto a eliminar: ");
+        int id = scanner.nextInt();
+
+        Product productToRemove = null;
+        for (Product p : inventory) {
+            if (p.getId() == id) {
+                productToRemove = p;
+                break;
+            }
+        }
+
+        if (productToRemove != null) {
+            dao.deleteProduct(id);
+            
+            inventory.remove(productToRemove);
+            numberProducts--;
+            
+            System.out.println("El producto con ID " + id + " ha sido eliminado.");
+        } else {
+            System.out.println("No se ha encontrado el producto con ID " + id);
+        }
+    }
+	
+public void deleteProduct(Product product) {
+        dao.deleteProduct(product.getId());
         
         inventory.remove(product);
         numberProducts--;
+        
+        System.out.println("Producto eliminado: " + product.getName());
     }
 	
 	/**

@@ -109,14 +109,20 @@ public class DaoImplHibernate implements Dao {
     }
 
     @Override
-    public void deleteProduct(Product product) {
+    public void deleteProduct(int id) {
         if (session == null || !session.isOpen()) connect();
         Transaction tx = null;
         try {
-            tx = session.beginTransaction();
-            session.delete(product);
+            tx = session.beginTransaction();           
+            Product product = session.get(Product.class, id);
+            
+            if (product != null) {
+                session.delete(product);
+                System.out.println("Producto eliminado con ID: " + id);
+            } else {
+                System.out.println("No se encontró producto con ID: " + id);
+            }            
             tx.commit();
-            System.out.println("Producto eliminado: " + product.getName());
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();

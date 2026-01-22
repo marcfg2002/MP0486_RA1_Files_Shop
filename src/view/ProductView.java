@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -73,17 +74,24 @@ public class ProductView extends JDialog implements ActionListener{
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		
+		
 		// name section
-		JLabel lblName = new JLabel("Nombre producto:");
-		lblName.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblName.setBounds(33, 10, 119, 19);
-		contentPanel.add(lblName);
-		textFieldName = new JTextField();
-		textFieldName.setHorizontalAlignment(SwingConstants.RIGHT);
-		textFieldName.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		textFieldName.setBounds(169, 10, 136, 25);
-		contentPanel.add(textFieldName);
-		textFieldName.setColumns(10);		
+		String labelText = "Nombre producto:";
+        if (option == Constants.OPTION_REMOVE_PRODUCT) {
+            labelText = "ID producto:";
+        }
+        
+        JLabel lblName = new JLabel(labelText);
+        lblName.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        lblName.setBounds(33, 10, 119, 19);
+        contentPanel.add(lblName);
+        
+        textFieldName = new JTextField();
+        textFieldName.setHorizontalAlignment(SwingConstants.RIGHT);
+        textFieldName.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        textFieldName.setBounds(169, 10, 136, 25);
+        contentPanel.add(textFieldName);
+        textFieldName.setColumns(10);	
 		
 		// stock section
 		JLabel lblStock = new JLabel("Stock producto:");
@@ -193,34 +201,45 @@ public class ProductView extends JDialog implements ActionListener{
 				break;
 				
 			case Constants.OPTION_REMOVE_PRODUCT:
-                // check product exists
-                product = shop.findProduct(textFieldName.getText());
-                
-                if (product == null) {
-                    JOptionPane.showMessageDialog(null, "Producto no existe ", "Error",
+                try {
+                    int idToDelete = Integer.parseInt(textFieldName.getText());
+                    
+                    Product productToDelete = null;
+                    ArrayList<Product> inventory = shop.getInventory();
+                    
+                    for (Product p : inventory) {
+                        if (p.getId() == idToDelete) {
+                            productToDelete = p;
+                            break;
+                        }
+                    }
+
+                    if (productToDelete == null) {
+                        JOptionPane.showMessageDialog(null, "No existe producto con ID " + idToDelete, "Error",
+                                JOptionPane.ERROR_MESSAGE);
+
+                    } else {
+                        shop.deleteProduct(productToDelete);
+
+                        JOptionPane.showMessageDialog(null, "Producto eliminado", "Information",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        dispose();
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "El ID debe ser un número entero", "Error",
                             JOptionPane.ERROR_MESSAGE);
-                    
-                } else {                    
-                    shop.deleteProduct(product);
-                    
-                    JOptionPane.showMessageDialog(null, "Producto eliminado", "Information",
-                            JOptionPane.INFORMATION_MESSAGE);
-                    // release current screen
-                    dispose();  
                 }
-                
                 break;
 
-			default:
-				break;
-			}
-			
-		}
-		
-		if (e.getSource() == cancelButton) {
-			// release current screen
-			dispose();			
-		}		
-	}
+            default:
+                break;
+            }
 
+        }
+
+        if (e.getSource() == cancelButton) {
+            // release current screen
+            dispose();
+        }
+    }
 }
