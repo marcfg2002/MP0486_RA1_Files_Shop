@@ -21,6 +21,8 @@ import dao.Dao;
 import dao.DaoImplFile;
 import dao.DaoImplJDBC;
 import dao.DaoImplHibernate;
+import dao.DaoImplMongoDB;
+
 
 public class Shop {
 	private Amount cash = new Amount(100.00);
@@ -30,7 +32,7 @@ public class Shop {
 //	private Sale[] sales;
 	private ArrayList<Sale> sales;
 	private int numberSales;
-	private Dao dao = new DaoImplHibernate();
+	private Dao dao = new DaoImplMongoDB();
 
 	final static double TAX_RATE = 1.04;
 
