@@ -88,7 +88,7 @@ public class DaoImplMongoDB implements Dao {
     public boolean writeInventory(ArrayList<Product> productsList) {
         if (database == null) connect();
         try {
-            MongoCollection<Document> collection = database.getCollection("historical_inventory");
+        	MongoCollection<Document> collection = database.getCollection("historical_inventory");
             ArrayList<Document> documents = new ArrayList<>();
             
             String createdAt = OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);

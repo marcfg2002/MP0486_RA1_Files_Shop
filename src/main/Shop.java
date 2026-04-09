@@ -5,22 +5,14 @@ import model.Sale;
 import model.Amount;
 import model.Client;
 import model.Employee;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
-
 import dao.Dao;
-import dao.DaoImplFile;
-import dao.DaoImplJDBC;
-import dao.DaoImplHibernate;
 import dao.DaoImplMongoDB;
 
 
